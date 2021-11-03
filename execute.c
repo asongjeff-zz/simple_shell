@@ -1,115 +1,151 @@
 #include "shell.h"
 
 /**
- * execute - A function that executes a command.
- * @command: The pointer to tokienized command
- * @name: The name of the shell.
- * @env: The pointer to the enviromental variables.
- * @cicles: Number of executed cicles.
- * Return: Nothing.
+ * is_path - checks if input command is part of directory PATH
+ * @command: a command
+ *
+ * Return: 1 if path, 0 if no path
  */
-void execute(char **command, char *name, char **env, int cicles)
+int is_path(char *command)
 {
-	char **pathways = NULL, *full_path = NULL;
-	struct stat st;
-	unsigned int i = 0;
+	int i;
 
-	if (_strcmp(command[0], "env") != 0)
-		print_env(env);
-	if (stat(command[0], &st) == 0)
+	i = 0;
+	while (command[i] != '\0')
 	{
-		if (execve(command[0], command, env) < 0)
-		{
-			perror(name);
-			free_exit(command);
-		}
-	}
-	else
-	{
-		pathways = _getPATH(env);
-		while (pathways[i])
-		{
-			full_path = _strcat(pathways[i], command[0]);
-			i++;
-			if (stat(full_path, &st) == 0)
-			{
-				if (execve(full_path, command, env) < 0)
-				{
-					perror(name);
-					free_dp(pathways);
-					free_exit(command);
-				}
-				return;
-			}
-		}
-		msgerror(name, cicles, command);
-		free_dp(pathways);
-	}
-}
-
-
-/**
- * print_env - A function that prints all enviromental variables.
- * @env: The pointer to enviromental variables.
- * Return: Nothing.
- */
-void print_env(char **env)
-{
-	size_t i = 0, len = 0;
-
-	while (env[i])
-	{
-		len = _strlen(env[i]);
-		write(STDOUT_FILENO, env[i], len);
-		write(STDOUT_FILENO, "\n", 1);
+		if (command[i] == '/')
+			return (1);
 		i++;
 	}
+
+		return (0);
 }
 
-
 /**
- * _getPATH - A function to gets the full value from.
- * enviromental variable PATH.
- * @env: The pointer to enviromental variables.
- * Return: All tokenized pathways for commands.
+ * exec_builtins - custom function to execute builtin commands
+ * @arginv: arguments inventory
+ *
+ * Return: 1 on success, 0 on failure
  */
-char **_getPATH(char **env)
+int exec_builtins(arg_inventory_t *arginv)
 {
-	char *pathvalue = NULL, **pathways = NULL;
-	unsigned int i = 0;
+	int i, retval;
+	/* old_stdout */
+	char *str, **commands;
+	builtins_t builtins_list[] = {
 
-	pathvalue = strtok(env[i], "=");
-	while (env[i])
+		{"env", _env}, {"setenv", _setenv},
+		{"unsetenv", _unsetenv}, {"history", _history}, {"cd", _cd},
+		{"alias", _alias}, {"unalias", _unalias}, {"help", shell_help},
+		{"exit", shell_exit},
+		{NULL, NULL}
+	};
+
+	retval = EXT_FAILURE;
+	commands = (char **)arginv->commands;
+
+	/* old_stdout = redirect_output(arginv, 0); */
+
+	for (i = 0; ((str = builtins_list[i].command) != NULL); i++)
 	{
-		if (_strcmp(pathvalue, "PATH"))
+		if (_strcmp(str, commands[0]) == 0)
 		{
-			pathvalue = strtok(NULL, "\n");
-			pathways = tokening(pathvalue, ":");
-			return (pathways);
+			retval = builtins_list[i].builtin_func(arginv);
+			break;
 		}
-		i++;
-		pathvalue = strtok(env[i], "=");
 	}
-	return (NULL);
+
+	arginv->exit_status = retval;
+	return (retval);
 }
 
+/**
+ * exec_error_exit - frees all and exits if exec error
+ * @msg: message to display
+ * @command: command to free
+ * @_environ: env double pointer to free
+ * @arginv: arg inventory to free
+ */
+void exec_error_exit(char *msg, char *command, char **_environ,
+		arg_inventory_t *arginv)
+{
+	delete_pipeline(&arginv->pipeline);
+	delete_parser(&arginv->parser);
+	delete_tokens(&arginv->tokens);
+	free(command);
+	free_paths(_environ);
+	freeall(arginv);
+	_perror(msg);
+	exit(1);
+}
 
 /**
- * msgerror - A function that prints message not found.
- * @name: The name of the shell.
- * @cicles: Number of cicles.
- * @command: The pointer to tokenized command.
- * Return: Nothing.
+ * exec_path - custom function to execute from PATH
+ * @command: command to execute
+ * @arginv: arg inventory
+ *
+ * Return: pid of parent
  */
-void msgerror(char *name, int cicles, char **command)
+pid_t exec_path(char *command, arg_inventory_t *arginv)
 {
-	char c;
+	pid_t pid;
+	char **_environ;
 
-	c = cicles + '0';
-	write(STDOUT_FILENO, name, _strlen(name));
-	write(STDOUT_FILENO, ": ", 2);
-	write(STDOUT_FILENO, &c, 1);
-	write(STDOUT_FILENO, ": ", 2);
-	write(STDOUT_FILENO, command[0], _strlen(command[0]));
-	write(STDOUT_FILENO, ": not found\n", 12);
+	pid = fork();
+	if (pid < 0)
+	{
+		_perror("Critical error: unable to fork()!\n");
+		exit(1);
+	}
+
+	if (pid == 0)
+	{
+		_environ = link_to_dpointer(arginv->envlist);
+
+		if (execve(command, (char **)arginv->commands, _environ) < 0)
+			exec_error_exit("No Command\n", command, _environ, arginv);
+	}
+	free(command);
+	return (pid);
+}
+
+/**
+ * execute - completes execution of input commands
+ * @arginv: arguments inventory
+ *
+ * Return: void
+ */
+pid_t execute(arg_inventory_t *arginv)
+{
+	env_t *envlist;
+	char **commands;
+	char *path, *command;
+	char **paths;
+
+	envlist = arginv->envlist;
+
+	commands = (char **)arginv->commands;
+
+	command = safe_malloc(sizeof(char) * BUFSIZE);
+	command = _strcpy(command, *commands);
+
+	if (exec_builtins(arginv) == EXT_FAILURE)
+	{
+		if (is_path(command))
+		{
+			return (exec_path(command, arginv));
+		}
+		else
+		{
+			path = safe_malloc(sizeof(char) * BUFSIZE);
+			locate_path(path, envlist);
+			paths = tokenize_path(path);
+			cat_path(paths, command);
+			free_paths(paths);
+			free(path);
+			return (exec_path(command, arginv));
+		}
+	}
+	free(command);
+	return (-1);
 }
