@@ -1,11 +1,16 @@
 #include "shell.h"
 
 /**
- *main - a unix interpreter
- *Function: displays a prompt and gets user input and execute them.
- *
- *Return: On success 1.
+ *get_line - Read entire line from stream into buffer
+ *Return: Buffer containing line read.
  */
+
+void sighandler(int sig_num)
+{
+  (void)sig_num;
+  write(STDOUT_FILENO, "\n$", _strlen("\n$"));
+  fflush(stdout);
+}
 
 int main(void)
 {

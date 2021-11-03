@@ -1,102 +1,53 @@
-TH man 1 "27 October 2021" "0.20" "ALX man page"
+.TH hsh 1 "0ctober 29, 2021" "1.0" "hsh The Commands Manual"
+
 .SH NAME
-.B alx
-- Simple Shell Studying purpose ALX SE program
+
+.B simple_shell -hsh
+- shell implementation of command interpreter
+
 .SH SYNOPSIS
-.B ./alx 
-[command] [options] [FILE]
-.SH COPYRIGHT
-.B alx 
-is Copyright (C) Simegnew Misganaw and Ibrahim Morketa.
+
+#include "shell.h"
+
+.PP
+.B command [ arguments ]
+.PP
+.B exit [ exit num]
+.PP
+.B ls -l
+.PP
+.B exit 78
+
 .SH DESCRIPTION
-.B alx 
-(Simple Shell) is a team project for students at ALX SE program we expore, understand and build a working functional simple shell program.
+simple_shell is a command line interpreter.This simple_shell has many features which are similar to the Thompson shell, but it is not a clone of it.
+.PP
+
 .B Overview
+The shell is a command that reads lines from a file,terminals and interprets them, and executes other commands
+.PP
 
-The simple shell is a simplified iteration of a command line interpreter, similar to 
-.B bash or 
-.B dash. 
-.I FORMAT [ARGUMENT]...
-.SH OPTIONS
-.B alx
-operates in both 
-.I interactive 
-and 
-.I non-interactive
- mode. The user may initiate 
-.B simple shell
-and begin working or initate 
-.B simple shell
-using commands meant to be run by the program.
-.SH ARGUMENTS
-The first argument, argument 0 is understood to be the command to be run by 
-.B simple shell
-and arguments following as modifiers or options.
-.SH INVOCATION
-.B alx
-may be invoked with the same functionality in 
-.I interactive 
-or 
-.I non-interactive 
-mode.  The user may quit the program by typing "exit", "Ctrl + D", on the command line.
-When the program quits or a command has been executed, 
-.B simple shell 
-returns with a new prompt: "$ "
+.B Invocation
+Simple_shell is complied with the GNU Compiler Collection, preferably with using "gcc" as shown in the example below
+.RS
+.B $ gcc -Wall -Wextra -pedantic *.c -0 hsh
+.P
+.RE
+simple_shell can be run in interactive mode and none interactive mode
+.P
+.RS
+.b echo 'pwd' | ./hsh
+.PP
 
-.B Example
-.IP
+.B Command Exit Status
 
-$./alx
-
-$pwd
-
-Username@your-regular-prompt:~$
-
-$
-
-$/bin/pwd
-
-Username@your-regular-prompt:~$
-$
-
-.SH RESERVED WORDS
-.B exit: 
-quits the program, exits the shell.
-
-.B env: 
-prints the environment variables
-
-.SH HISTORY
-The 
-.B history 
-built-in displays the history list, one command per line, preceded with line numbers, starting with 0. On exit the entire history is written to a file named
-.I simple_shell_history
-in the 
-.I $HOME
-directory.
-.SH SHELL BUILTIN COMMANDS
-The commands 
-.B exit
-,
-.B env
-,
-.B help
-and
-.B echo
-are handled automatically by 
-.B alx
-
-.SH SEE ALSO
-.I sh(1)
-,
-.I bash(1)
-,
-.I _printf(3)
+Each command has an exit status that can influence the behaviour of other shell com-
+mands.  The paradigm is that a command exits with zero for normal or success, and non-
+zero for failure, error, or a false indication.
 
 .SH BUGS
-No Known bug , please 
-Report 
-.B alx
-bugs to https://github.com/ibrisha/simple_shell
-.SH AUTHOR
-Ibrahim Morketa & Simegnew Misganaw
+Please report any bugs and issues to the authors
+
+.SH AUTHORS
+
+Robert Mudzonga <rmudzonga64@gmail.com>
+Munashe Dante Kansepa <>
