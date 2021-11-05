@@ -1,53 +1,67 @@
-.TH hsh 1 "0ctober 29, 2021" "1.0" "hsh The Commands Manual"
+.\" Manpage for Simple Shell.
+.\" Contact Tony Baidoo <crzctrl5789@gmail.com> or Fitsum Belay <fitsum.ozo@gmail.com> to correct errors or typos.
+.TH "Simple Shell" 1 "3 November 2021" "1.0" "Simple Shell man page"
 
 .SH NAME
-
-.B simple_shell -hsh
-- shell implementation of command interpreter
+hsh - Simple Shell
 
 .SH SYNOPSIS
-
-#include "shell.h"
-
-.PP
-.B command [ arguments ]
-.PP
-.B exit [ exit num]
-.PP
-.B ls -l
-.PP
-.B exit 78
+./hsh
+[command] [options]
 
 .SH DESCRIPTION
-simple_shell is a command line interpreter.This simple_shell has many features which are similar to the Thompson shell, but it is not a clone of it.
-.PP
+Welcome to the Simple Shell project! This program is a simple shell that can be compiled and launched from the command line within any number of Linux versions.
 
-.B Overview
-The shell is a command that reads lines from a file,terminals and interprets them, and executes other commands
-.PP
+.SH OVERVIEW
+The Simple Shell project is a major team project conducted by Tony Baidoo and Fitsum Belay, students at ALX School.
 
-.B Invocation
-Simple_shell is complied with the GNU Compiler Collection, preferably with using "gcc" as shown in the example below
-.RS
-.B $ gcc -Wall -Wextra -pedantic *.c -0 hsh
-.P
-.RE
-simple_shell can be run in interactive mode and none interactive mode
-.P
-.RS
-.b echo 'pwd' | ./hsh
-.PP
+.SH RETURN VALUE
+The shell returns the error code given by the last completed command followed by either ctrl-d or exit with no status code.
 
-.B Command Exit Status
+.SH SYNTAX
+($) <command> <flags or options> <argument 1> <argument 2> ...
 
-Each command has an exit status that can influence the behaviour of other shell com-
-mands.  The paradigm is that a command exits with zero for normal or success, and non-
-zero for failure, error, or a false indication.
+$ <command> | ./hsh
+.SS
+
+.SS
+EXAMPLE 1:
+($) /bin/ls
+.SS
+EXAMPLE 2:
+($) ls -l
+.SS
+EXAMPLE 3:
+($) cat textfile
+.SS
+
+
+.SS
+EXAMPLE 4:
+$ echo "ls -a" | ./hsh
+
+.SH BUILTIN COMMANDS
+
+.SS cd
+- change directory
+
+.SS env
+- list the current environment variable
+
+.SS exit
+- exit from shell
+
+
 
 .SH BUGS
-Please report any bugs and issues to the authors
+No known bugs
 
 .SH AUTHORS
+rediet abdisa 
+    redietalx@gmail.com
+        https://github.com/redieight
 
-Robert Mudzonga <rmudzonga64@gmail.com>
-Munashe Dante Kansepa <>
+	Jeffrey ASONGANYI
+	    asongjeff@gmail.com
+	       https://github.com/asongjeff
+	        

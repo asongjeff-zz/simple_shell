@@ -1,24 +1,11 @@
-# Simple Shell
+# SIMPLE SHELL #
+Shell is a program that takes the command inputs written from the the user’s keyboard and passes them to the machine to execute them through the kernel. It also verifies if the command inputs from the user are correct.
 
-## Learning Objectives
-At the end of this project, you are expected to be able to [explain to anyone](https://fs.blog/2021/02/feynman-learning-technique/ "The Feynman Learning Technique"), without the help of Google:
 
-### General
-* Who designed and implemented the original Unix operating system
-* Who wrote the first version of the UNIX shell
-* Who invented the B programming language (the direct predecessor to the C programming language)
-* Who is Ken Thompson
-* How does a shell work
-* What is a pid and a ppid
-* How to manipulate the environment of the current process
-* What is the difference between a function and a system call
-* How to create processes
-* What are the three prototypes of main
-* How does the shell use the PATH to find the programs
-* How to execute another program with the execve system call
-* How to suspend the execution of a process until one of its children terminates
-* What is EOF / “end-of-file”?
+## OVERVIEW ##
+The simple shell project is a collaboration by redit abdisa and Jeffrey ASONGANYI, Software Engineering students at ALX, which contains some of its most basic characteristics, such as : Handling PATHS, implementing BUILT-INS and executing commands.
 
+<<<<<<< HEAD
 ## Requirements
 What is required to implement this project.
 
@@ -59,3 +46,7 @@ $ echo "qwerty" | ./././hsh
 ./././hsh: 1: qwerty: not found
 $
 ```
+=======
+## DESCRIPTION ##
+Simple Shell is a simple program which akes the keyboard commands and delivers them to the system to be executed. This shell is developed in the programming language C.  some built-in commands implement: exit, env, cd.
+>>>>>>> ee968e2a1f6eaf3de4a9ae73848f6258cfd3aa2e
